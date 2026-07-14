@@ -7,8 +7,8 @@ const { validateLogin, validateChangePassword } = require('../validators/authVal
 
 const cookieOptions = {
     httpOnly: true,
-    secure: false, // set to true in production
-    sameSite: 'Lax'
+    secure: process.env.NODE_ENV === 'production', // set to true in production otherwise false
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
 }
 
 const signToken = (userId) => jwt.sign({ user_id: userId }, process.env.JWT_SecretKey);
