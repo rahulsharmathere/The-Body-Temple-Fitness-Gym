@@ -19,6 +19,7 @@ const app = express();
 app.use(cors({
     origin: [
         process.env.CLIENT_URL,
+         "https://www.thebtf.in",
         "http://localhost:5173",
         "http://localhost:5174"
     ],
