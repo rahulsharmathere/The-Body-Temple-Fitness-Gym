@@ -5,6 +5,7 @@ const connectDB = () => {
         .then(() => {
             console.log('DB connection successful')
             console.log("Connected DB:", mongoose.connection.name);
+            console.log("DB URI:", process.env.MONGO_URI);
         })
             
         .catch(err => {
