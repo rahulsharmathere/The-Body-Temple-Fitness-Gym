@@ -19,6 +19,34 @@ const MemberSetup = () => {
     age: '', gender: '', height: '', currentWeight: '', goal: ''
   });
 
+  const [photoPreview, setPhotoPreview] = useState('');
+  const [photoBase64, setPhotoBase64] = useState('');
+  const [photoError, setPhotoError] = useState('');
+
+  const handlePhotoCapture = (event) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  setPhotoError('');
+
+  if (!file.type.startsWith('image/')) {
+    setPhotoError('Please select a valid image');
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    setPhotoError('Image is too large (max 5MB)');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    setPhotoBase64(reader.result);
+    setPhotoPreview(reader.result);
+  };
+  reader.onerror = () => setPhotoError('Could not read the image, please try again');
+  reader.readAsDataURL(file);
+}
+
   const handlePasswordChange = (event, name) => {
     setPasswordField({ ...passwordField, [name]: event.target.value });
   }
@@ -41,7 +69,8 @@ const MemberSetup = () => {
 
   const submitProfile = async () => {
     setSaving(true);
-    await axios.patch(`${API_BASE}/profile/complete`, profileField, { withCredentials: true }).then(() => {
+    const payload = photoBase64 ? { ...profileField, profilePhoto: photoBase64 } : profileField;
+    await axios.patch(`${API_BASE}/profile/complete`, payload, { withCredentials: true }).then(() => {
       toast.success('Profile completed');
       navigate('/member/dashboard');
     }).catch(err => {
@@ -87,7 +116,26 @@ const MemberSetup = () => {
               </button>
             </div>
           ) : (
+            
             <div className='flex flex-col gap-5 mt-8'>
+              <div className='flex flex-col items-center gap-3'>
+                <label htmlFor='profile-photo-input' className='w-24 h-24 rounded-full border-2 border-dashed border-bone-600 flex items-center justify-center overflow-hidden cursor-pointer bg-ink-900'>
+                  {photoPreview ? (
+                    <img src={photoPreview} alt='Your photo' className='w-full h-full object-cover' />
+                  ) : (
+                    <span className='text-xs text-bone-400 text-center px-2'>Tap to<br />take photo</span>
+                  )}
+                </label>
+                <input
+                  id='profile-photo-input'
+                  type='file'
+                  accept='image/*'
+                  capture='user'
+                  onChange={handlePhotoCapture}
+                  className='hidden'
+                />
+                {photoError && <p className='text-crimson-400 text-xs'>{photoError}</p>}
+              </div>
               <div className='grid grid-cols-2 gap-4'>
                 <div>
                   <label className='field-label'>Age</label>

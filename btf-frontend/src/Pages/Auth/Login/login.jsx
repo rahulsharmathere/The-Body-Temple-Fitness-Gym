@@ -38,7 +38,7 @@ const Login = () => {
         })
         navigate('/admin/dashboard');
       } else if (user.mustChangePassword || !user.isProfileCompleted) {
-        navigate('/member/setup');
+        navigate('/member/setup'); 
       } else {
         navigate('/member/dashboard');
       }

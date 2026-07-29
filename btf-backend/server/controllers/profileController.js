@@ -21,7 +21,17 @@ exports.completeProfile = async (req, res, next) => {
             return res.status(400).json({ success: false, message: errors[0] });
         }
 
-        const { age, gender, height, currentWeight, goal, maintenanceCalories, targetCalories } = req.body;
+        const { age, gender, height, currentWeight, goal, maintenanceCalories, targetCalories, profilePhoto } = req.body;
+
+        if (profilePhoto !== undefined && profilePhoto !== '') {
+            const isValidImage = /^data:image\/(png|jpe?g|webp);base64,/.test(profilePhoto);
+            if (!isValidImage) {
+                return res.status(400).json({ success: false, message: 'Invalid image format' });
+            }
+            if (profilePhoto.length > 2.7 * 1024 * 1024) {
+                return res.status(400).json({ success: false, message: 'Image is too large. Please use a smaller photo.' });
+            }
+        }
 
         const profile = await MemberProfile.findOne({ user: req.user._id });
         if (!profile) {
@@ -40,7 +50,9 @@ exports.completeProfile = async (req, res, next) => {
 
         await WeightHistory.create({ user: req.user._id, weight: currentWeight });
 
-        await User.findByIdAndUpdate(req.user._id, { isProfileCompleted: true });
+        const userUpdates = { isProfileCompleted: true };
+        if (profilePhoto) userUpdates.profilePhoto = profilePhoto;
+        await User.findByIdAndUpdate(req.user._id, userUpdates);
 
         res.status(200).json({ success: true, message: 'Profile completed successfully', data: profile });
     } catch (err) {
