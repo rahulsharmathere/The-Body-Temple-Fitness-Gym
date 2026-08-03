@@ -44,8 +44,7 @@ const getGreeting = () => {
   const currentHour = new Date().getHours();
   if (currentHour < 12) return "Good Morning";
   if (currentHour < 18) return "Good Afternoon";
-  if (currentHour < 21) return "Good Evening";
-  return "Good Night";
+  else return "Good Evening";
 }
 
 const Sidebar = () => {

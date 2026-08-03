@@ -23,15 +23,14 @@ exports.completeProfile = async (req, res, next) => {
 
         const { age, gender, height, currentWeight, goal, maintenanceCalories, targetCalories, profilePhoto } = req.body;
 
+        // profilePhoto is now a Cloudinary URL (uploaded from the frontend), not base64
         if (profilePhoto !== undefined && profilePhoto !== '') {
-            const isValidImage = /^data:image\/(png|jpe?g|webp);base64,/.test(profilePhoto);
-            if (!isValidImage) {
-                return res.status(400).json({ success: false, message: 'Invalid image format' });
-            }
-            if (profilePhoto.length > 2.7 * 1024 * 1024) {
-                return res.status(400).json({ success: false, message: 'Image is too large. Please use a smaller photo.' });
+            const isValidUrl = /^https?:\/\//.test(profilePhoto);
+            if (!isValidUrl) {
+                return res.status(400).json({ success: false, message: 'Invalid image URL' });
             }
         }
+        
 
         const profile = await MemberProfile.findOne({ user: req.user._id });
         if (!profile) {

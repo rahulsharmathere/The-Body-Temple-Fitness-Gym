@@ -19,11 +19,13 @@ const MemberSetup = () => {
     age: '', gender: '', height: '', currentWeight: '', goal: ''
   });
 
-  const [photoPreview, setPhotoPreview] = useState('');
-  const [photoBase64, setPhotoBase64] = useState('');
-  const [photoError, setPhotoError] = useState('');
 
-  const handlePhotoCapture = (event) => {
+  const [photoPreview, setPhotoPreview] = useState('');
+const [photoUrl, setPhotoUrl] = useState('');
+const [photoError, setPhotoError] = useState('');
+const [photoUploading, setPhotoUploading] = useState(false);
+
+const handlePhotoCapture = async (event) => {
   const file = event.target.files?.[0];
   if (!file) return;
 
@@ -38,13 +40,22 @@ const MemberSetup = () => {
     return;
   }
 
-  const reader = new FileReader();
-  reader.onload = () => {
-    setPhotoBase64(reader.result);
-    setPhotoPreview(reader.result);
-  };
-  reader.onerror = () => setPhotoError('Could not read the image, please try again');
-  reader.readAsDataURL(file);
+  setPhotoPreview(URL.createObjectURL(file));
+  setPhotoUploading(true);
+
+  // upload straight to Cloudinary, same as the rest of the app
+  const data = new FormData();
+  data.append('file', file);
+  data.append('upload_preset', 'gym-management');
+
+  try {
+    const response = await axios.post('https://api.cloudinary.com/v1_1/dtrgiq72j/image/upload', data);
+    setPhotoUrl(response.data.url);
+  } catch (err) {
+    console.log(err);
+    setPhotoError('Could not upload the image, please try again');
+  }
+  setPhotoUploading(false);
 }
 
   const handlePasswordChange = (event, name) => {
@@ -69,8 +80,9 @@ const MemberSetup = () => {
 
   const submitProfile = async () => {
     setSaving(true);
-    const payload = photoBase64 ? { ...profileField, profilePhoto: photoBase64 } : profileField;
+    const payload = photoUrl ? { ...profileField, profilePhoto: photoUrl } : profileField;
     await axios.patch(`${API_BASE}/profile/complete`, payload, { withCredentials: true }).then(() => {
+      if (photoUrl) localStorage.setItem('userPic', photoUrl);
       toast.success('Profile completed');
       navigate('/member/dashboard');
     }).catch(err => {
@@ -134,6 +146,7 @@ const MemberSetup = () => {
                   onChange={handlePhotoCapture}
                   className='hidden'
                 />
+                {photoUploading && <p className='text-bone-400 text-xs'>Uploading photo...</p>}
                 {photoError && <p className='text-crimson-400 text-xs'>{photoError}</p>}
               </div>
               <div className='grid grid-cols-2 gap-4'>
@@ -165,7 +178,7 @@ const MemberSetup = () => {
                 <label className='field-label'>Goal</label>
                 <input type='text' value={profileField.goal} onChange={(e) => handleProfileChange(e, 'goal')} className='input' placeholder='e.g. Fat loss, Muscle gain' />
               </div>
-              <button type='button' onClick={submitProfile} disabled={saving} className='btn-primary w-full'>
+              <button type='button' onClick={submitProfile} disabled={saving || photoUploading} className='btn-primary w-full'>
                 {saving ? 'Saving...' : 'Finish Setup'} <ArrowRight size={16} />
               </button>
             </div>
