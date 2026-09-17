@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Expand, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Expand, X, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 
 // A single hover/click tile, shared by the banner and the grid below it so
 // both stay visually identical.
@@ -25,8 +25,12 @@ const Tile = ({ src, index, className = '', onClick }) => (
   </button>
 )
 
+// How many grid tiles (excluding the banner) to show before the "view more" reveal.
+const INITIAL_VISIBLE = 6
+
 const Gallery = ({ gallery }) => {
   const [activeIndex, setActiveIndex] = useState(null)
+  const [showAll, setShowAll] = useState(false)
   const isOpen = activeIndex !== null
 
   const showPrev = useCallback(() => {
@@ -58,6 +62,8 @@ const Gallery = ({ gallery }) => {
   }
 
   const rest = gallery.slice(1)
+  const visibleRest = showAll ? rest : rest.slice(0, INITIAL_VISIBLE)
+  const hiddenCount = rest.length - visibleRest.length
 
   return (
     <div id='gallery' className='section bg-ink-950'>
@@ -70,7 +76,7 @@ const Gallery = ({ gallery }) => {
           </p>
         </div>
 
-        <div className='flex flex-col gap-4 md:gap-5'>
+        <div className='flex flex-col gap-6 md:gap-10'>
           {/* featured banner - sets a clear starting point instead of a wall of equal tiles */}
           <Tile
             src={gallery[0]}
@@ -79,19 +85,34 @@ const Gallery = ({ gallery }) => {
             className='aspect-[16/9] sm:aspect-[3/1]'
           />
 
-          {/* uniform grid for the rest - consistent size, no scattered spans */}
+          {/* looser grid for the rest - fewer columns, more breathing room, capped by default */}
           {rest.length > 0 && (
-            <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-5'>
-              {rest.map((img, i) => (
-                <Tile
-                  key={i + 1}
-                  src={img}
-                  index={i + 1}
-                  onClick={() => setActiveIndex(i + 1)}
-                  className='aspect-square'
-                />
-              ))}
-            </div>
+            <>
+              <div className='grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-8'>
+                {visibleRest.map((img, i) => (
+                  <Tile
+                    key={i + 1}
+                    src={img}
+                    index={i + 1}
+                    onClick={() => setActiveIndex(i + 1)}
+                    className='aspect-square'
+                  />
+                ))}
+              </div>
+
+              {!showAll && hiddenCount > 0 && (
+                <div className='flex justify-center'>
+                  <button
+                    type='button'
+                    onClick={() => setShowAll(true)}
+                    className='inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/15 text-bone-300 text-xs tracking-widest2 uppercase hover:border-white/30 hover:text-white transition-colors duration-300'
+                  >
+                    <Plus size={14} />
+                    View {hiddenCount} more photo{hiddenCount === 1 ? '' : 's'}
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
