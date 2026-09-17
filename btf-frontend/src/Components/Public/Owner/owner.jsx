@@ -1,9 +1,7 @@
 import React from 'react'
 import { Quote } from 'lucide-react'
 import ownerPhoto from '../../../assets/owner.png'
-// Swap `photo` for the real image path once it's in your assets
-// (e.g. '/images/owner.jpg'). No backend field for this yet, so it
-// lives here as plain data rather than coming from gym-info.
+
 const OWNER = {
   name: 'Rahul Sharma',
   title: 'Founder & Head Coach',
@@ -19,24 +17,28 @@ const OWNER = {
 const Owner = () => {
   return (
     <div id='owner' className='section bg-ink-900'>
-      <div className='container-max grid md:grid-cols-2 gap-14 items-center'>
-        <div className='relative animate-fadeUp order-2 md:order-1'>
+      <div className='container-max grid md:grid-cols-[2fr_3fr] gap-14 items-center'>
+        <div className='relative animate-fadeUp order-2 md:order-1 max-w-[280px] md:max-w-none mx-auto md:mx-0 w-full'>
           <div className='relative rounded-2xl overflow-hidden aspect-[4/5] shadow-card-hover border border-ink-700'>
-            <img src={OWNER.photo} alt={OWNER.name} className='w-full h-full object-cover' />
-            <div className='absolute inset-0 bg-gradient-to-t from-ink-950/85 via-ink-950/10 to-transparent' />
+            <img
+              src={OWNER.photo}
+              alt={OWNER.name}
+              className='w-full h-full object-cover grayscale-[50%] contrast-[0.9] brightness-[0.85]'
+            />
+            {/* heavier, hero-style overlay so the photo sits back instead of dominating */}
+            <div className='absolute inset-0 bg-gradient-to-t from-ink-950/95 via-ink-950/50 to-ink-950/20' />
+            <div className='absolute inset-0 bg-ink-950/10' />
 
-            {/* small crimson tag, echoes the "MOST POPULAR" pill language from pricing */}
-            <span className='absolute top-5 left-5 px-3 py-1 rounded-full bg-crimson-600 text-white text-[10px] font-semibold uppercase tracking-widest2'>
+            <span className='absolute top-4 left-4 px-3 py-1 rounded-full bg-crimson-600 text-white text-[10px] font-semibold uppercase tracking-widest2'>
               Founder
             </span>
           </div>
 
-          {/* stat badge - dark card with its own border so it stands off the section bg */}
-          <div className='absolute -bottom-6 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:-right-6 flex bg-ink-950 border border-ink-700 rounded-xl shadow-card-hover px-6 py-4 gap-6 items-center'>
+          <div className='absolute -bottom-5 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:-right-5 flex bg-ink-950 border border-ink-700 rounded-xl shadow-card-hover px-5 py-3 gap-5 items-center'>
             {OWNER.stats.map((s) => (
               <div key={s.label} className='text-center px-1'>
-                <div className='font-display text-2xl text-crimson-400'>{s.value}</div>
-                <div className='text-[10px] uppercase tracking-widest2 text-bone-400 mt-1 whitespace-nowrap'>{s.label}</div>
+                <div className='font-display text-xl text-crimson-400'>{s.value}</div>
+                <div className='text-[9px] uppercase tracking-widest2 text-bone-400 mt-1 whitespace-nowrap'>{s.label}</div>
               </div>
             ))}
           </div>
