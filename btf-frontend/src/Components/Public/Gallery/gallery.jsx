@@ -1,9 +1,29 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Expand, X, ChevronLeft, ChevronRight } from 'lucide-react'
 
-// Every 5th tile is given extra room so the grid reads as an editorial
-// mosaic instead of a flat sheet of identical squares.
-const isFeatured = (index) => index % 5 === 0
+// A single hover/click tile, shared by the banner and the grid below it so
+// both stay visually identical.
+const Tile = ({ src, index, className = '', onClick }) => (
+  <button
+    type='button'
+    onClick={onClick}
+    className={`group relative rounded-xl overflow-hidden focus-visible:outline-none ${className}`}
+    aria-label={`Open gym photo ${index + 1}`}
+  >
+    <img
+      src={src}
+      loading='lazy'
+      className='w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110'
+      alt={`gym photo ${index + 1}`}
+    />
+    <div className='absolute inset-0 bg-gradient-to-t from-ink-950/80 via-ink-950/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
+    <div className='absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
+      <span className='w-10 h-10 rounded-full bg-white/10 border border-white/25 backdrop-blur-sm flex items-center justify-center'>
+        <Expand size={16} className='text-white' />
+      </span>
+    </div>
+  </button>
+)
 
 const Gallery = ({ gallery }) => {
   const [activeIndex, setActiveIndex] = useState(null)
@@ -11,11 +31,11 @@ const Gallery = ({ gallery }) => {
 
   const showPrev = useCallback(() => {
     setActiveIndex((prev) => (prev - 1 + gallery.length) % gallery.length)
-  }, [gallery?.length])
+  }, [gallery])
 
   const showNext = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % gallery.length)
-  }, [gallery?.length])
+  }, [gallery])
 
   useEffect(() => {
     if (!isOpen) return
@@ -37,8 +57,10 @@ const Gallery = ({ gallery }) => {
     return null
   }
 
+  const rest = gallery.slice(1)
+
   return (
-    <div id='gallery' className='section bg-ink-900'>
+    <div id='gallery' className='section bg-ink-950'>
       <div className='container-max'>
         <div className='text-center mb-16'>
           <span className='eyebrow justify-center'>Inside The BTF</span>
@@ -48,34 +70,29 @@ const Gallery = ({ gallery }) => {
           </p>
         </div>
 
-        <div className='grid grid-cols-2 md:grid-cols-4 auto-rows-[150px] sm:auto-rows-[170px] md:auto-rows-[190px] gap-3 md:gap-4 grid-flow-dense'>
-          {gallery.map((img, index) => {
-            const featured = isFeatured(index)
-            return (
-              <button
-                key={index}
-                type='button'
-                onClick={() => setActiveIndex(index)}
-                className={`group relative rounded-xl overflow-hidden focus-visible:outline-none ${
-                  featured ? 'row-span-2 md:col-span-2 md:row-span-2' : ''
-                }`}
-                aria-label={`Open gym photo ${index + 1}`}
-              >
-                <img
+        <div className='flex flex-col gap-4 md:gap-5'>
+          {/* featured banner - sets a clear starting point instead of a wall of equal tiles */}
+          <Tile
+            src={gallery[0]}
+            index={0}
+            onClick={() => setActiveIndex(0)}
+            className='aspect-[16/9] sm:aspect-[3/1]'
+          />
+
+          {/* uniform grid for the rest - consistent size, no scattered spans */}
+          {rest.length > 0 && (
+            <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-5'>
+              {rest.map((img, i) => (
+                <Tile
+                  key={i + 1}
                   src={img}
-                  loading='lazy'
-                  className='w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110'
-                  alt={`gym photo ${index + 1}`}
+                  index={i + 1}
+                  onClick={() => setActiveIndex(i + 1)}
+                  className='aspect-square'
                 />
-                <div className='absolute inset-0 bg-gradient-to-t from-ink-950/80 via-ink-950/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
-                <div className='absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-                  <span className='w-10 h-10 rounded-full bg-white/10 border border-white/25 backdrop-blur-sm flex items-center justify-center'>
-                    <Expand size={16} className='text-white' />
-                  </span>
-                </div>
-              </button>
-            )
-          })}
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
