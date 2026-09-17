@@ -3,8 +3,8 @@ import { Quote } from 'lucide-react'
 import ownerPhoto from '../../../assets/owner.png'
 
 const OWNER = {
-  name: 'Rahul Sharma',
-  title: 'Founder & Head Coach',
+  name: 'Shailesh Sharma',
+  title: 'Founder',
   photo: ownerPhoto,
   quote: "This gym isn't a side project - it's the place I wanted to train in and couldn't find, so I built it.",
   bio: 'Started coaching out of a single rented hall with a handful of regulars. Years later, the goal is the same: honest training, real attention on form, and no gimmicks sold at the front desk.',
