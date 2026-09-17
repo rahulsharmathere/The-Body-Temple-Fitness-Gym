@@ -56,7 +56,7 @@ const Plans = ({ plans }) => {
                   </ul>
 
                   <a
-                    href='#about'
+                    href='#contact'
                     className={isHighlighted ? 'btn bg-white text-crimson-700 hover:bg-bone-100' : 'btn-secondary'}
                   >
                     Get Started

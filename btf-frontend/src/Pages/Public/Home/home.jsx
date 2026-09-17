@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react'
 import Navbar from '../../../Components/Public/Navbar/navbar'
 import Hero from '../../../Components/Public/Hero/hero'
 import About from '../../../Components/Public/About/about'
+import Owner from '../../../Components/Public/Owner/owner'
+import Trainers from '../../../Components/Public/Trainers/trainers'
 import Plans from '../../../Components/Public/Plans/plans'
 import Gallery from '../../../Components/Public/Gallery/gallery'
+import Contact from '../../../Components/Public/Contact/contact'
 import Footer from '../../../Components/Public/Footer/footer'
 import Loader from '../../../Components/Loader/loader'
+
 import { getGymInfo, getPlans } from './data'
 
 const Home = () => {
@@ -37,11 +41,14 @@ const Home = () => {
 
   return (
     <div className='w-full bg-ink-950'>
-      <Navbar gymName={gymInfo?.gymName} />
+            <Navbar gymName={gymInfo?.gymName} />
       <Hero gymName={gymInfo?.gymName} tagline={gymInfo?.tagline} heroImage={gymInfo?.heroImage} />
       <About description={gymInfo?.description} address={gymInfo?.address} timings={gymInfo?.timings} phone={gymInfo?.phone} />
+      <Owner />
+      <Trainers />
       <Plans plans={plans} />
       <Gallery gallery={gymInfo?.gallery} />
+      <Contact phone={gymInfo?.phone} email={gymInfo?.email} />
       <Footer gymName={gymInfo?.gymName} phone={gymInfo?.phone} email={gymInfo?.email} instagram={gymInfo?.instagram} facebook={gymInfo?.facebook} />
     </div>
   )

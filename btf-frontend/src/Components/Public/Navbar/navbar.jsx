@@ -4,8 +4,10 @@ import { Menu, X, Dumbbell } from 'lucide-react'
 
 const NAV_LINKS = [
   { href: '#about', label: 'About' },
+  { href: '#trainers', label: 'Trainers' },
   { href: '#plans', label: 'Plans' },
   { href: '#gallery', label: 'Gallery' },
+  { href: '#contact', label: 'Contact' },
 ]
 
 const Navbar = ({ gymName }) => {
