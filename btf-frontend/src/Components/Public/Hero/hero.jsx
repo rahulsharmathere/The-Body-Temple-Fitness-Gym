@@ -1,8 +1,9 @@
 import React from 'react'
 import { ArrowRight, ChevronDown } from 'lucide-react'
+import { HERO_IMAGE } from '../../../constants/heroimage'
 
 const Hero = ({ gymName, tagline, heroImage }) => {
-  const bgImage =  "https://imgs.search.brave.com/rtCUUpbRSh-bGBT7R6uJkMJMsNpj0Yl0p7_TSBjxQ4A/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJjYXZlLmNv/bS93cC93cDk0ODQ5/MTcuanBn"
+  const bgImage = heroImage || HERO_IMAGE
 
   return (
     <div
