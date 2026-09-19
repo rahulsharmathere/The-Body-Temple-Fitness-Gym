@@ -4,6 +4,7 @@ import { CheckCircle2, Flame, Trophy, CalendarDays } from 'lucide-react'
 import EmptyState from '../../../Components/UI/EmptyState'
 import { ToastContainer, toast } from 'react-toastify'
 import { API_BASE } from '../../../api/base'
+import AttendanceHeatmap from '../../../Components/UI/AttendanceHeatmap'
 
 const StatTile = ({ icon: Icon, label, value }) => (
   <div className='card p-5 flex items-center gap-4'>
@@ -83,7 +84,7 @@ const MemberAttendance = () => {
         <StatTile icon={CalendarDays} label='Total Days' value={stats.totalDays} />
       </div>
 
-      <div className='panel mt-8'>
+      {/* <div className='panel mt-8'>
         <div className='font-display text-lg uppercase tracking-wide text-bone-50 mb-5'>History</div>
 
         {loading ? (
@@ -101,6 +102,15 @@ const MemberAttendance = () => {
               </div>
             ))}
           </div>
+        )}
+      </div> */}
+
+      <div className='panel mt-8'>
+        <div className='font-display text-lg uppercase tracking-wide text-bone-50 mb-5'>Activity</div>
+        {loading ? (
+          <div className='h-28 skeleton rounded-lg' />
+        ) : (
+          <AttendanceHeatmap history={history} />
         )}
       </div>
 
