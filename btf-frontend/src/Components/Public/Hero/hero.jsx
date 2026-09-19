@@ -3,7 +3,7 @@ import { ArrowRight, ChevronDown } from 'lucide-react'
 import { HERO_IMAGE } from '../../../constants/heroimage'
 
 const Hero = ({ gymName, tagline, heroImage }) => {
-  const bgImage = heroImage || HERO_IMAGE
+  const bgImage =  HERO_IMAGE
 
   return (
     <div
